@@ -10,7 +10,7 @@ import (
 
 
 
-func ERROR(w http.ResponseWriter, statusCode int, err error) {
+	func ERROR(w http.ResponseWriter, statusCode int, err error) {
 	w.Header().Set("Content-Type", "application/json")
 	if err != nil {
 		JSON(w, statusCode, struct {
