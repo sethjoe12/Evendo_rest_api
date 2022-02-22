@@ -4,23 +4,22 @@ import (
 
 	"time"
 	"github.com/dgrijalva/jwt-go"
+	
   )
 
 
 type Order struct{
-    Id          int    `json:"id"`
-	ProductName  string `json:"productName"`
-	ProductPrice int    `json:"productPrice"`
+    OrderId          int    `json:"id"`
+	ProductId  int `json:"productid"`
 	Quantity int    `json:"quantity"`
 	Created_At      time.Time          `json:"created_at"`
 	Updated_At      time.Time          `json:"updtaed_at"`
-	User_ID         string             `json:"user_id"`
 
 }
 type Product struct {
-	Id  int `bson:"_id"`
-	ProductPrice int           `json:"productprice"`
+	ProductId  int `bson:"_productid"`
 	ProductName string          `json:"productname"`
+	ProductPrice int           `json:"productprice"`
 	Quantity int                `json:"quantity"`
       
 }

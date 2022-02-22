@@ -1,18 +1,25 @@
 package handlers
 
 import (
-	"net/http"
-	"io/ioutil"
-	"log"
-	"sethjoe/pkg/models"
-	"sethjoe/pkg/mocks"
-	"encoding/json"
-	"math/rand"
-	"strconv"
-	"github.com/gorilla/mux"
+    "encoding/json"
+    "io/ioutil"
+    "log"
+    "math/rand"
+    "net/http"
+    "github.com/gorilla/mux"
+    "sethjoe/pkg/mocks"
+    "sethjoe/pkg/models"
+    "strconv"
 )
 
-func AdminAddProduct(w http.ResponseWriter, r *http.Request) {
+
+
+func ViewAllProduct(w http.ResponseWriter, r *http.Request) {
+    w.Header().Add("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(mocks.Product)
+}
+func AddProduct(w http.ResponseWriter, r *http.Request) {
     
     defer r.Body.Close()
     body, err := ioutil.ReadAll(r.Body)
@@ -29,8 +36,7 @@ func AdminAddProduct(w http.ResponseWriter, r *http.Request) {
     w.WriteHeader(http.StatusCreated)
     json.NewEncoder(w).Encode("Created")
 }
-
-func AdminDeleteProduct(w http.ResponseWriter, r *http.Request) {
+func DeleteProduct(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     id, _ := strconv.Atoi(vars["id"])
 
@@ -46,24 +52,4 @@ func AdminDeleteProduct(w http.ResponseWriter, r *http.Request) {
         }
     }
 }
-func AdminViewProducts(w http.ResponseWriter, r *http.Request) {
-    w.Header().Add("Content-Type", "application/json")
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(mocks.Product)
-}
-func AdminViewOrder(w http.ResponseWriter, r *http.Request) {
-    vars := mux.Vars(r)
-    id, _ := strconv.Atoi(vars["id"])
 
-    
-    for _, Order := range mocks.Order {
-        if Order.OrderId   == id {
-            
-            w.Header().Add("Content-Type", "application/json")
-            w.WriteHeader(http.StatusOK)
-
-            json.NewEncoder(w).Encode(Order)
-            break
-        }
-    }
-}
