@@ -10,8 +10,11 @@ import (
 	"math/rand"
 	"strconv"
 	"github.com/gorilla/mux"
+    "fmt"
 )
-
+func AdminEntry(w http.ResponseWriter, r *http.Request){
+    fmt.Fprint(w, "Hello Admin!")
+}
 func AdminAddProduct(w http.ResponseWriter, r *http.Request) {
     
     defer r.Body.Close()
@@ -66,4 +69,9 @@ func AdminViewOrder(w http.ResponseWriter, r *http.Request) {
             break
         }
     }
+}
+func ViewAlluser(w http.ResponseWriter, r *http.Request) {
+    w.Header().Add("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(mocks.Username)
 }

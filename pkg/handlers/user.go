@@ -84,19 +84,4 @@ func GetUserByUsername(username string) (models.User, error) {
 	return models.User{}, errors.New("Invalid Username")
 }
 
-func ProductViewerAdmin(w http.ResponseWriter, r *http.Request){
-
-
-}
-
-
-func SearchProduct(w http.ResponseWriter, r *http.Request){
-
-
-}
-func SearchProductByQuery(w http.ResponseWriter, r *http.Request){
-
-
-    
-}
 

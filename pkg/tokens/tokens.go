@@ -2,53 +2,53 @@ package token
 
 import (
 	"fmt"
-	"time"
-
+	"net/http"
 	"github.com/dgrijalva/jwt-go"
+	"encoding/json"
+	"sethjoe/pkg/models"
+	"github.com/mitchellh/mapstructure"
 )
 
-var jwtKey = []byte("oooooryt")
-
-type Claims struct {
-	UserID   string `json:"userId"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Role     string `json:"role"`
-	jwt.StandardClaims
-}
-
-func New(username string, role string, userId string) (*string, error) {
-	expirationTime := time.Now().Add((24 * 30) * time.Hour)
-	// Create the JWT claims, which includes the username and expiry time
-	claims := &Claims{
-		UserID:   userId,
-		Username: username,
-		Role:     role,
-		StandardClaims: jwt.StandardClaims{
-			// In JWT, the expiry time is expressed as unix milliseconds
-			ExpiresAt: expirationTime.Unix(),
-		},
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(jwtKey)
-
-	if err != nil {
-		// If there is an error in creating the JWT return an internal server error
-		return nil, err
-	}
-	return &tokenString, nil
-
-}
-
-func Decode(bearerToken string) (*Claims, error) {
-	token, err := jwt.Parse(bearerToken, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
+func UserEntry(w http.ResponseWriter, req *http.Request) {
+	var username models.User
+	_ = json.NewDecoder(req.Body).Decode(&username)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"username": username.Username,
 	})
-
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		//return &Claims{Email: fmt.Sprintf("%v", claims["email"]), Role: token.Claims.Role , Name: fmt.Sprintf("%v", claims["name"]), UserId: fmt.Sprintf("%v", claims["userId"])}, err
-		return &Claims{Username: fmt.Sprintf("%v", claims["username"]), Role: fmt.Sprintf("%v", claims["role"]), UserID: fmt.Sprintf("%v", claims["userId"])}, err
-	} else {
-		return nil, err
+	tokenString, error := token.SignedString([]byte("secret"))
+	if error != nil {
+		fmt.Println(error)
 	}
-}
+	json.NewEncoder(w).Encode(models.JwtToken{Token: tokenString})
+  }
+  
+  func ProtectedEndpoint(w http.ResponseWriter, req *http.Request) {
+	params := req.URL.Query()
+	token, _ := jwt.Parse(params["token"][0], func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("There was an error")
+		}
+		return []byte("secret"), nil
+	})
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		var username models.User
+		mapstructure.Decode(claims, &username)
+		json.NewEncoder(w).Encode(username)
+	} else {
+		json.NewEncoder(w).Encode(models.Exception{Message: "Invalid authorization token"})
+	}
+  }
+  
+  func UserTokenLogin(w http.ResponseWriter, req *http.Request){
+	fmt.Fprint(w, "Hi! Good Day!")
+	
+  }
+
+  ///this will display all data inputed by the users.
+ // func UserTokenLogin(w http.ResponseWriter, req *http.Request) {
+	//decoded := context.Get(req, "decoded")
+	//var username models.User
+	//mapstructure.Decode(decoded.(jwt.MapClaims), &username)
+	//json.NewEncoder(w).Encode(username)
+  //}
+  

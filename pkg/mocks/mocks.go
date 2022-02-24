@@ -1,6 +1,19 @@
 package mocks
 
 import "sethjoe/pkg/models"
+var Username = []models.User{
+    {
+        Username:"jojo",
+        Password:"gwapo",
+        Role:"buyer",
+        Gender:"male",
+        Email:"sethjoe@yahoo.com",
+        Status: "single",
+        ContactNumber:12223343,
+        
+    },
+
+}
 
 var Product = []models.Product{
     {
